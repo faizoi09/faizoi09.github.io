@@ -62,7 +62,7 @@ body {
 
 .background {
     margin-top: 15px;
-	position: absolute;
+    position: absolute;
     top: 40px;
     left: 20px;
 }
@@ -106,7 +106,7 @@ gap: 0px; /* Jarak antara sel-sel grid */
 line-height: 0.3;
 font-size: 8px;
 position: absolute;
-top: 60px;
+top: 68px;
 }
 
 
