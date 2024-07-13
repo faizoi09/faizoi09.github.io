@@ -31,10 +31,10 @@ body {
     color: white;
     padding: 0.05px;
     position: relative;
-	font-size: 12px;
+    font-size: 12px;
     text-align: center;
     padding-left: 9px;
-	line-height: 0.3;
+    line-height: 0.3;
 }
 
 .logo {
@@ -64,11 +64,11 @@ body {
     margin-top: 15px;
     position: absolute;
     top: 40px;
-    left: 20px;
+    left: 15px;
 }
 
 .background img {
-    width: 110px;
+    width: 100px;
     height: 120px;
     border-radius: 0%;
     border: 0px solid #003366;
