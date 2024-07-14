@@ -61,9 +61,9 @@ body {
 
 
 .background {
-    margin-top: 60px;
-    margin-left: 50px;
-    position: absolute;
+    justify-content: center;
+    align-items: center;
+    position: relative;
     top: 30px;
     left: 30px;
 }
