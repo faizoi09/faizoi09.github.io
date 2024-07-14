@@ -92,12 +92,24 @@ body {
 .details {
     margin-top: 0px;
     padding: 0px;
-	font-size: 8px;
+    font-size: 8px;
     text-align: left;
     padding-left: 10px;
-	line-height: 1;
+    line-height: 1;
 }
 
+.details1 {
+    position: absolute;
+    top: 141px;
+    margin-top: 0px;
+    margin-right: 40px;
+    padding: 0px;
+    font-size: 8px;
+    text-align: left;
+    padding-right: 40px;
+    padding-left: 100px;
+    line-height: 1;
+}
 
 .grid-container {
 display: grid;
