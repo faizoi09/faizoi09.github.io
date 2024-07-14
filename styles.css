@@ -116,7 +116,7 @@ display: grid;
 grid-template-columns: 1fr 2fr ; 
 gap: 0px; /* Jarak antara sel-sel grid */
 line-height: 0.3;
-font-size: 8px;
+font-size: 10px;
 position: absolute;
 top: 60px;
 }
