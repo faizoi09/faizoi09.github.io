@@ -61,8 +61,10 @@ body {
 
 
 .background {
-    justify-content: center;
-    align-items: center;
+    margin-top: 50px;
+    margin-left: 50px;
+    top: 30px;
+    left: 30px;
     position: absolute;
 }
 
