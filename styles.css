@@ -100,14 +100,13 @@ body {
 
 .details1 {
     position: absolute;
-    top: 141px;
-    margin-top: 0px;
+    top: 145px;
     margin-right: 40px;
     padding: 0px;
     font-size: 8px;
     text-align: left;
     padding-right: 40px;
-    padding-left: 100px;
+    padding-left: 90px;
     line-height: 1;
 }
 
