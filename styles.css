@@ -49,11 +49,11 @@ body {
     margin-top: 8px;
 	position: absolute;
 	top: 40px;
-    right: 15px;
+    right: 10px;
 }
 
 .photo img {
-    width: 70px;
+    width: 80px;
     height: 90px;
     border-radius: 0%;
     border: 0px solid #003366;
