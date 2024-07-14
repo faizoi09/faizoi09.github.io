@@ -63,9 +63,7 @@ body {
 .background {
     justify-content: center;
     align-items: center;
-    position: relative;
-    top: 30px;
-    left: 30px;
+    position: absolute;
 }
 
 .background img {
