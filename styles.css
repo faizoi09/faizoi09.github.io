@@ -61,7 +61,7 @@ body {
 
 
 .background {
-    margin-top: 45px;
+    margin-top: 50px;
     margin-left: 50px;
     position: absolute;
     top: 30px;
@@ -69,8 +69,8 @@ body {
 }
 
 .background img {
-    width: 100px;
-    height: 120px;
+    width: 90px;
+    height: 100px;
     border-radius: 0%;
     border: 0px solid #003366;
 	 z-index: -2;
