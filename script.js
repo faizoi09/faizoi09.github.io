@@ -125,6 +125,7 @@ class POSSystem {
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         const endIndex = Math.min(startIndex + this.itemsPerPage, productsToShow.length);
         const currentProducts = productsToShow.slice(startIndex, endIndex);
+        const totalPages = Math.ceil(productsToShow.length / this.itemsPerPage);
 
         productsGrid.innerHTML = currentProducts.map(product => {
             const isInCart = this.cart.some(item => item.id === product.id);
@@ -148,6 +149,49 @@ class POSSystem {
                 </div>
             `;
         }).join('');
+
+        if (totalPages > 1) {
+            const pagination = document.createElement('div');
+            pagination.className = 'pagination';
+            
+            if (this.currentPage > 1) {
+                pagination.innerHTML += `
+                    <button class="page-btn prev-btn" onclick="window.pos.changePage(${this.currentPage - 1})">
+                        Sebelumnya
+                    </button>
+                `;
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (
+                    i === 1 || 
+                    i === totalPages || 
+                    (i >= this.currentPage - 1 && i <= this.currentPage + 1)
+                ) {
+                    pagination.innerHTML += `
+                        <button class="page-btn ${i === this.currentPage ? 'active' : ''}" 
+                            onclick="window.pos.changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (
+                    i === this.currentPage - 2 || 
+                    i === this.currentPage + 2
+                ) {
+                    pagination.innerHTML += `<span class="page-dots">...</span>`;
+                }
+            }
+
+            if (this.currentPage < totalPages) {
+                pagination.innerHTML += `
+                    <button class="page-btn next-btn" onclick="window.pos.changePage(${this.currentPage + 1})">
+                        Berikutnya
+                    </button>
+                `;
+            }
+
+            productsGrid.appendChild(pagination);
+        }
     }
 
     formatNumber(num) {
@@ -635,6 +679,12 @@ class POSSystem {
 
         const message = this.generateWhatsAppMessage(this.lastTransaction);
         window.open(`https://wa.me/${this.waNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    changePage(pageNumber) {
+        this.currentPage = pageNumber;
+        this.renderProducts(this.products);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
