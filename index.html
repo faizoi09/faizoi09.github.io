@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-   
 </head>
 <body>
     <nav class="navbar">
@@ -23,26 +22,16 @@
                     <span class="cart-badge" id="cartBadge">0</span>
                     <span class="cart-text">Keranjang</span>
                 </div>
-                <a href="admin/index.html" class="nav-link admin-only">
-                    <i class="fas fa-cog"></i>
-                    Panel Admin
-                </a>
-            </div>
-            <div class="nav-user">
-                <span id="userDisplay"></span>
-                <button onclick="window.pos.logout()" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </button>
             </div>
         </div>
     </nav>
+
     <div id="loadingOverlay" style="display: none;">
         <div class="loading-spinner"></div>
         <p>Memuat data...</p>
     </div>
-    <div class="container">
 
+    <div class="container">
         <main>
             <div class="products-section">
                 <div class="search-container">
@@ -52,18 +41,7 @@
                     </div>
                 </div>
                 <div class="products-grid" id="productsGrid">
-                    <div class="products-container">
-                        <!-- 5 produk pertama -->
-                    </div>
-                    <div class="products-container">
-                        <!-- 5 produk kedua -->
-                    </div>
-                    <div class="products-container">
-                        <!-- 5 produk ketiga -->
-                    </div>
-                </div>
-                <div class="pagination">
-                    <!-- Pagination content -->
+                    <!-- Products will be loaded here -->
                 </div>
             </div>
 
@@ -75,7 +53,7 @@
                     </div>
                     <div class="cart-section">
                         <div class="cart-items" id="cartItems">
-                            <!-- Item keranjang akan ditampilkan di sini -->
+                            <!-- Cart items will be loaded here -->
                         </div>
                         <div class="cart-summary">
                             <div class="total">
@@ -105,17 +83,15 @@
             </div>
         </main>
     </div>
+
     <div id="strukModal" class="modal">
         <div class="modal-content">
             <div class="modal-body">
                 <div class="struk-container" id="printArea">
                     <div class="struk-header">
                         <h2 id="strukStoreName">TOKO-KU</h2>
-                        <p>Griya Permata Asri F11 NO34</p>
-                        <p>Telp: 081905494162</p>
                         <p id="tanggalStruk"></p>
                         <p id="noStruk"></p>
-                        <p id="kasirStruk"></p>
                     </div>
 
                     <div class="buyer-info">
@@ -125,24 +101,13 @@
                     </div>
 
                     <div class="struk-items" id="itemList">
-                        <!-- Items akan ditampilkan di sini -->
+                        <!-- Items will be displayed here -->
                     </div>
 
                     <div class="total-section">
                         <div class="item-row">
                             <strong>Total:</strong>
                             <span id="totalStruk"></span>
-                        </div>
-                    </div>
-
-                    <div class="payment-section">
-                        <div class="payment-row">
-                            <span>Tunai:</span>
-                            <span id="tunaiStruk"></span>
-                        </div>
-                        <div class="payment-row">
-                            <span>Kembalian:</span>
-                            <span id="kembalianStruk"></span>
                         </div>
                     </div>
 
@@ -163,94 +128,9 @@
             </div>
         </div>
     </div>
+
     <iframe id="printFrame" style="display: none;"></iframe>
-    <div id="loginModal" class="modal">
-        <div class="login-container">
-            <h2>Login</h2>
-            <form id="loginForm" onsubmit="return window.pos.handleLogin(event)">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div class="form-buttons">
-                    <button type="submit">Login</button>
-                    <button type="button" onclick="window.pos.closeLoginModal()">Batal</button>
-                </div>
-            </form>
-        </div>
-    </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="script.js"></script>
-    <style media="print">
-        @page {
-            size: 80mm auto;
-            margin: 0;
-        }
-
-        body * {
-            visibility: hidden;
-        }
-
-        #printArea, #printArea * {
-            visibility: visible;
-        }
-
-        #printArea {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 80mm;
-            padding: 10px;
-        }
-
-        .modal, .modal-content {
-            position: static;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            background: none;
-            box-shadow: none;
-        }
-
-        .struk-container {
-            border: none;
-            padding: 0;
-        }
-
-        .modal-header, .modal-footer {
-            display: none !important;
-        }
-
-        .struk-header h2 {
-            font-size: 16pt;
-            margin-bottom: 5px;
-        }
-
-        .struk-header p {
-            font-size: 9pt;
-            margin: 2px 0;
-        }
-
-        .buyer-info p,
-        .struk-items,
-        .payment-row,
-        .total-section {
-            font-size: 9pt;
-            margin: 3px 0;
-        }
-
-        .struk-footer {
-            font-size: 8pt;
-            margin-top: 10px;
-        }
-
-        .struk-footer p {
-            margin: 2px 0;
-        }
-    </style>
 </body>
 </html>

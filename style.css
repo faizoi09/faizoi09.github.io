@@ -57,9 +57,9 @@ main {
 }
 
 .products-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
     width: 100%;
 }
 
