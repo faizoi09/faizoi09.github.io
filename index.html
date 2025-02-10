@@ -3,60 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ID Card</title>
-    <link rel="stylesheet" href="https://faizoi09.github.io/styles.css">
+    <title>BOUQUET MIS-RIN</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+   
 </head>
 <body>
-    <div class="id-card-container">
-        <div class="id-card">
-            <div class="header">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgFjRrMugrv5rDLZH74P5bAokob8VOB8JcNmjoi03J2NxC4uKD4XlGLdnfyGxpi5jR5HMGeBlC68_yRg4G3XE4MSK_Fe4bDqOLVewlefIspQZ3w9jrshEV0zK8OTfFxHCzEQJdUQidKS69CWsFCpg_xEhsDAkHYydrg09MOgLtLF8aAZh_1CZycYsVwIqWz/s320/Untitled%20design.png" alt="Logo Perusahaan" class="logo">
-                <P>KARTU ANGGOTA</P>
-				<P>YAYASAN LASKAR ALAWIYYIN BERSATU</P>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="images/logo.png" alt="Logo" class="nav-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiM0RjQ2RTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIHN0eWxlPSJmb250LWZhbWlseTogc2Fucy1zZXJpZjsgZm9udC1zaXplOiAxNnB4OyBmb250LXdlaWdodDogYm9sZDsiPlBPUzwvdGV4dD48L3N2Zz4='">
+                <h1 id="storeName">TOKO-KU</h1>
             </div>
-            <div class="photo">
-                <img src="&lt;&lt;[foto]&gt;&gt;" alt="Foto Profil">
+            <div class="nav-menu">
+                <div class="cart-icon" onclick="window.pos.toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                    <span class="cart-text">Keranjang</span>
+                </div>
+                <a href="admin/index.html" class="nav-link admin-only">
+                    <i class="fas fa-cog"></i>
+                    Panel Admin
+                </a>
             </div>
-            <div class="background">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFpw5xEw_zMhw8WZkNN3qC358_SufGRRwrmlOvqzpWMkOVmUgF5niV1-Ur_LeG-ae5Df7F4GRrFVoJKAj2GalZReoAjyvfyoAByuryIQmbPxqU6iprIoXnNGCNDkI0ZqMvyq41vpP8MOA0Xvg5W02HIOtxIEvylnRBBvk75zFKg09T9YPYJw9_tnZDue-A/s1600/Desain%20tanpa%20judul%20(3).png" alt="background">
-            </div>			
-			<div class="barcode">
-                <img src="https://qrcode.tec-it.com/API/QRCode?data=&lt;&lt;[ID ANGGOTA]&gt;&gt;" alt="barcode">
+            <div class="nav-user">
+                <span id="userDisplay"></span>
+                <button onclick="window.pos.logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
             </div>
-			<p style='text-align: center; font-size: 8px; margin-top: 5px;'><strong>ID:&lt;&lt;[ID ANGGOTA]&gt;&gt;</strong></p>
-            <div class="details">
-			<div class="grid-container">
-                <p>NIK</p>
-				 <p>:</p>
-				<p>&lt;&lt;[NO KTP]&gt;&gt;</p>
-                <p>NAMA</p>
-				 <p>:</p>
-				 <p>&lt;&lt;[NAMA]&gt;&gt;</p>
-				<p>JENIS KELAMIN</p>
-				 <p>:</p>
-				<p>&lt;&lt;[KELAMIN]&gt;&gt;</p>
-				<p>TTL</p>
-				<p>:</p>
-				<p>&lt;&lt;[TTL]&gt;&gt;</p>
-				<p>STATUS PERKAWINAN</p>
-				 <p>:</p>
-				 <p>&lt;&lt;[STATUS KAWIN]&gt;&gt;</p>
-				<p>PEKERJAAN</p>
-				 <p>:</p>
-				 <p>&lt;&lt;[PEKERJAAN]&gt;&gt;</p>
-				<p>EMAIL</p>
-				 <p>:</p>
-				 <p>&lt;&lt;[EMAIL]&gt;&gt;</p>
-				<p>ALAMAT</p>
-				 <p>:</p>
-				 <p>&lt;&lt;[ALAMAT]&gt;&gt;</p>
-				</div>
+        </div>
+    </nav>
+    <div id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Memuat data...</p>
+    </div>
+    <div class="container">
+
+        <main>
+            <div class="products-section">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Cari produk..." oninput="window.pos.searchProducts(this.value)">
+                    <div class="search-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="products-grid" id="productsGrid">
+                    <div class="products-container">
+                        <!-- 5 produk pertama -->
+                    </div>
+                    <div class="products-container">
+                        <!-- 5 produk kedua -->
+                    </div>
+                    <div class="products-container">
+                        <!-- 5 produk ketiga -->
+                    </div>
+                </div>
+                <div class="pagination">
+                    <!-- Pagination content -->
+                </div>
             </div>
-	            <div class="footer">
-                <p>Jl Raya Serang - Cilegon Ds. Margasana Kec. Kramatwatu (masjid Al-Karomah)</p>
-                <p>Tlp. 081906270480/ 085946566767</p>
+
+            <div id="cartModal" class="modal">
+                <div class="modal-content cart-modal">
+                    <div class="modal-header">
+                        <h2>Keranjang Belanja</h2>
+                        <span class="close" onclick="window.pos.toggleCart()">&times;</span>
+                    </div>
+                    <div class="cart-section">
+                        <div class="cart-items" id="cartItems">
+                            <!-- Item keranjang akan ditampilkan di sini -->
+                        </div>
+                        <div class="cart-summary">
+                            <div class="total">
+                                <span>Total:</span>
+                                <span id="cartTotal">Rp 0</span>
+                            </div>
+                            
+                            <div class="buyer-form">
+                                <div class="form-group">
+                                    <label for="buyerName">Nama Pembeli *</label>
+                                    <input type="text" id="buyerName" placeholder="Masukkan nama lengkap">
+                                </div>
+                                <div class="form-group">
+                                    <label for="buyerAddress">Alamat *</label>
+                                    <textarea id="buyerAddress" placeholder="Masukkan alamat lengkap"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="buyerPhone">No. WhatsApp *</label>
+                                    <input type="tel" id="buyerPhone" placeholder="Contoh: 08123456789">
+                                </div>
+                            </div>
+                            
+                            <button id="checkoutBtn" disabled>Bayar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="strukModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="struk-container" id="printArea">
+                    <div class="struk-header">
+                        <h2 id="strukStoreName">TOKO-KU</h2>
+                        <p>Griya Permata Asri F11 NO34</p>
+                        <p>Telp: 081905494162</p>
+                        <p id="tanggalStruk"></p>
+                        <p id="noStruk"></p>
+                        <p id="kasirStruk"></p>
+                    </div>
+
+                    <div class="buyer-info">
+                        <p id="buyerNameStruk"></p>
+                        <p id="buyerAddressStruk"></p>
+                        <p id="buyerPhoneStruk"></p>
+                    </div>
+
+                    <div class="struk-items" id="itemList">
+                        <!-- Items akan ditampilkan di sini -->
+                    </div>
+
+                    <div class="total-section">
+                        <div class="item-row">
+                            <strong>Total:</strong>
+                            <span id="totalStruk"></span>
+                        </div>
+                    </div>
+
+                    <div class="payment-section">
+                        <div class="payment-row">
+                            <span>Tunai:</span>
+                            <span id="tunaiStruk"></span>
+                        </div>
+                        <div class="payment-row">
+                            <span>Kembalian:</span>
+                            <span id="kembalianStruk"></span>
+                        </div>
+                    </div>
+
+                    <div class="struk-footer">
+                        <p>Terima kasih atas kunjungan Anda</p>
+                        <p>Silahkan Lanjutkan dengan mentransfer</p>
+                        <p>ke rekening yang tertera di pesan WA</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-print" onclick="window.print()">Cetak Struk</button>
+                <button class="btn-whatsapp" onclick="window.pos.sendToWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> 
+                    Kirim ke WhatsApp
+                </button>
+                <button class="btn-close" onclick="closeModal()">Tutup</button>
             </div>
         </div>
     </div>
+    <iframe id="printFrame" style="display: none;"></iframe>
+    <div id="loginModal" class="modal">
+        <div class="login-container">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="return window.pos.handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit">Login</button>
+                    <button type="button" onclick="window.pos.closeLoginModal()">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="script.js"></script>
+    <style media="print">
+        @page {
+            size: 80mm auto;
+            margin: 0;
+        }
+
+        body * {
+            visibility: hidden;
+        }
+
+        #printArea, #printArea * {
+            visibility: visible;
+        }
+
+        #printArea {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 80mm;
+            padding: 10px;
+        }
+
+        .modal, .modal-content {
+            position: static;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background: none;
+            box-shadow: none;
+        }
+
+        .struk-container {
+            border: none;
+            padding: 0;
+        }
+
+        .modal-header, .modal-footer {
+            display: none !important;
+        }
+
+        .struk-header h2 {
+            font-size: 16pt;
+            margin-bottom: 5px;
+        }
+
+        .struk-header p {
+            font-size: 9pt;
+            margin: 2px 0;
+        }
+
+        .buyer-info p,
+        .struk-items,
+        .payment-row,
+        .total-section {
+            font-size: 9pt;
+            margin: 3px 0;
+        }
+
+        .struk-footer {
+            font-size: 8pt;
+            margin-top: 10px;
+        }
+
+        .struk-footer p {
+            margin: 2px 0;
+        }
+    </style>
 </body>
 </html>
