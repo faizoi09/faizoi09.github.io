@@ -769,75 +769,161 @@ main {
 @media print {
     @page {
         margin: 0.6cm 0.6cm 0.6cm 0.6cm;
-        size: 80mm auto;  /* Lebar tetap 80mm, tinggi menyesuaikan konten */
+        size: 80mm auto;
     }
     
     html, body {
         width: 80mm;
         height: auto;
-        margin: 0;
+        margin: 0.6cm 0.6cm 0.6cm 0.6cm;
         padding: 0;
+        font-family: 'Inter', sans-serif;
     }
     
-    body * {
+    /* Sembunyikan semua elemen */
+    * {
         visibility: hidden;
     }
     
-    #printArea,
-    #printArea * {
+    /* Tampilkan hanya area yang akan dicetak */
+    #strukModal,
+    #strukModal * {
         visibility: visible;
+        position: initial;
     }
     
-    #printArea {
+    #strukModal {
         position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
+        left: 50%;
+        top: 0.3cm;
+        transform: translateX(-50%);
+        width: 80mm;
         padding: 0;
-        margin: 0;
+        margin: 0.3cm;
     }
     
-    .modal,
     .modal-content {
-        position: static;
-        transform: none;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: visible;
-        box-shadow: none;
-    }
-    
-    /* Sembunyikan elemen yang tidak perlu */
-    .modal-header,
-    .modal-footer,
-    .close,
-    .btn-print,
-    .btn-whatsapp,
-    .btn-close {
-        display: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: none !important;
     }
     
     .struk-container {
-        padding: 0 5px;
+        padding: 0 0.6cm;
         width: 100%;
-        margin: 0;
+        margin: 0 auto;
+        background: white !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
     }
     
-    /* Atur ukuran font dan spacing */
+    .total-section {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        background: none !important;
+        padding: 8px 0;
+    }
+    
+    .item-row {
+        border: none !important;
+        box-shadow: none !important;
+        background: none !important;
+    }
+    
+    .buyer-info {
+        border-bottom: 1px dashed #000 !important;
+        box-shadow: none !important;
+        background: none !important;
+    }
+    
+    .struk-header {
+        border-bottom: 1px dashed #000 !important;
+        box-shadow: none !important;
+        background: none !important;
+    }
+    
+    .struk-footer {
+        border-top: 1px dashed #000 !important;
+        box-shadow: none !important;
+        background: none !important;
+    }
+    
+    /* Styling untuk konten struk */
+    .struk-header {
+        text-align: center;
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+        border-bottom: 1px dashed #000 !important;
+    }
+    
     .struk-header h2 {
-        font-size: 12pt;
-        margin: 0;
+        font-size: 14pt;
+        font-weight: bold;
+        margin: 0 0 8px 0;
+        color: #000 !important;
     }
     
-    .struk-header p,
-    .buyer-info p,
-    .item-row,
-    .total-section,
+    .struk-header p {
+        font-size: 9pt;
+        margin: 3px 0;
+        line-height: 1.3;
+        color: #000 !important;
+    }
+    
+    .buyer-info {
+        padding: 8px 0;
+        margin: 10px 0;
+        border-bottom: 1px dashed #000 !important;
+    }
+    
+    .buyer-info p {
+        font-size: 9pt;
+        margin: 4px 0;
+        line-height: 1.3;
+        color: #000 !important;
+    }
+    
+    .struk-items {
+        margin: 15px 0;
+    }
+    
+    .item-row {
+        font-size: 9pt;
+        padding: 4px 0;
+        line-height: 1.3;
+        display: flex;
+        justify-content: space-between;
+        color: #000 !important;
+        border: none !important;
+    }
+    
+    .total-section {
+        margin: 12px 0;
+        padding: 8px 0;
+        border-top: 1px dashed #000 !important;
+        background: none !important;
+    }
+    
+    .total-section .item-row {
+        font-weight: bold;
+        font-size: 10pt;
+    }
+    
+    .struk-footer {
+        text-align: center;
+        margin-top: 15px;
+        padding-top: 12px;
+        border-top: 1px dashed #000 !important;
+    }
+    
     .struk-footer p {
         font-size: 8pt;
-        margin: 2px 0;
-        line-height: 1.2;
+        margin: 3px 0;
+        line-height: 1.3;
+        color: #000 !important;
     }
     
     /* Pastikan tidak ada page break */
@@ -847,9 +933,17 @@ main {
     .struk-items,
     .total-section,
     .struk-footer {
-        page-break-inside: avoid;
-        page-break-after: avoid;
-        page-break-before: avoid;
+        page-break-inside: avoid !important;
+    }
+    
+    /* Sembunyikan tombol-tombol */
+    .modal-footer,
+    .btn-print,
+    .btn-whatsapp,
+    .btn-close,
+    .close {
+        display: none !important;
+        visibility: hidden !important;
     }
 }
 

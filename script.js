@@ -548,40 +548,75 @@ class POSSystem {
     }
 
     showStruk(strukData) {
-        const modal = document.getElementById('strukModal');
-        if (!modal) return;
-        
         try {
-            document.getElementById('noStruk').textContent = `No: ${this.generateStrukNumber()}`;
+            const modal = document.getElementById('strukModal');
+            if (!modal) {
+                console.error('Modal struk tidak ditemukan');
+                return;
+            }
 
-            const options = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            
-            document.getElementById('tanggalStruk').textContent = new Date().toLocaleDateString('id-ID', options);
+            // Set store name
+            const storeNameEl = document.getElementById('strukStoreName');
+            if (storeNameEl) {
+                storeNameEl.textContent = this.storeName || 'BOUQUET MIS-RIN';
+            }
 
+            // Set nomor struk
+            const noStrukEl = document.getElementById('noStruk');
+            if (noStrukEl) {
+                noStrukEl.textContent = `No: ${this.generateStrukNumber()}`;
+            }
+
+            // Set tanggal
+            const tanggalEl = document.getElementById('tanggalStruk');
+            if (tanggalEl) {
+                const options = {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                };
+                tanggalEl.textContent = new Date().toLocaleDateString('id-ID', options);
+            }
+
+            // Set buyer info
+            const buyerNameEl = document.getElementById('buyerNameStruk');
+            const buyerAddressEl = document.getElementById('buyerAddressStruk');
+            const buyerPhoneEl = document.getElementById('buyerPhoneStruk');
+
+            if (buyerNameEl && strukData.buyer) {
+                buyerNameEl.textContent = `Pembeli: ${strukData.buyer.name}`;
+            }
+            if (buyerAddressEl && strukData.buyer) {
+                buyerAddressEl.textContent = `Alamat: ${strukData.buyer.address}`;
+            }
+            if (buyerPhoneEl && strukData.buyer) {
+                buyerPhoneEl.textContent = `WhatsApp: ${strukData.buyer.phone}`;
+            }
+
+            // Set items
             const itemList = document.getElementById('itemList');
-            itemList.innerHTML = strukData.items.map(item => `
-                <div class="item-row">
-                    <span>${item.nama_produk} x${item.quantity}</span>
-                    <span>Rp ${this.formatNumber(item.harga * item.quantity)}</span>
-                </div>
-            `).join('');
+            if (itemList && strukData.items) {
+                itemList.innerHTML = strukData.items.map(item => `
+                    <div class="item-row">
+                        <span>${item.nama_produk} x${item.quantity}</span>
+                        <span>Rp ${this.formatNumber(item.harga * item.quantity)}</span>
+                    </div>
+                `).join('');
+            }
 
-            document.getElementById('totalStruk').textContent = `Rp ${this.formatNumber(strukData.total)}`;
+            // Set total
+            const totalEl = document.getElementById('totalStruk');
+            if (totalEl) {
+                totalEl.textContent = `Rp ${this.formatNumber(strukData.total)}`;
+            }
 
-            document.getElementById('buyerNameStruk').textContent = `Pembeli: ${strukData.buyer.name}`;
-            document.getElementById('buyerAddressStruk').textContent = `Alamat: ${strukData.buyer.address}`;
-            document.getElementById('buyerPhoneStruk').textContent = `WhatsApp: ${strukData.buyer.phone}`;
-
+            // Tampilkan modal
             modal.style.display = 'block';
-            
+
         } catch (error) {
             console.error('Error showing struk:', error);
             alert('Terjadi kesalahan saat menampilkan struk');
