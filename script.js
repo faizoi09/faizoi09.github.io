@@ -15,6 +15,7 @@ class POSSystem {
         
         this.initSystem();
         this.lastTransaction = null;
+        this.currentProduct = null;
     }
 
     async initSystem() {
@@ -127,28 +128,25 @@ class POSSystem {
         const currentProducts = productsToShow.slice(startIndex, endIndex);
         const totalPages = Math.ceil(productsToShow.length / this.itemsPerPage);
 
-        productsGrid.innerHTML = currentProducts.map(product => {
-            const isInCart = this.cart.some(item => item.id === product.id);
-            return `
-                <div class="product-card" data-id="${product.id}">
-                    <div class="product-image">
-                        ${product.gambar_produk ? 
-                            `<img src="${product.gambar_produk}" alt="${product.nama_produk}" onerror="this.src='images/no-image.png'">` : 
-                            `<img src="images/no-image.png" alt="No Image">`
-                        }
-                    </div>
-                    <div class="product-info">
-                        <h3>${product.nama_produk}</h3>
-                        <p class="price">Rp ${this.formatNumber(product.harga)}</p>
-                        <p class="stock">Stok: ${product.stok} ${product.satuan || 'pcs'}</p>
-                        <button onclick="window.pos.addToCart(${JSON.stringify(product).replace(/"/g, '&quot;')})"
-                            class="${isInCart ? 'in-cart' : ''}">
-                            ${isInCart ? 'Dalam Keranjang' : 'Tambah ke Keranjang'}
-                        </button>
-                    </div>
+        productsGrid.innerHTML = currentProducts.map(product => `
+            <div class="product-card" data-id="${product.id}">
+                <div class="product-image" onclick="window.pos.showProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                    ${product.gambar_produk ? 
+                        `<img src="${product.gambar_produk}" alt="${product.nama_produk}" onerror="this.src='images/no-image.png'">` : 
+                        `<img src="images/no-image.png" alt="No Image">`
+                    }
                 </div>
-            `;
-        }).join('');
+                <div class="product-info">
+                    <h3 onclick="window.pos.showProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">${product.nama_produk}</h3>
+                    <p class="price">Rp ${this.formatNumber(product.harga)}</p>
+                    <p class="stock">Stok: ${product.stok} ${product.satuan || 'pcs'}</p>
+                    <button onclick="window.pos.addToCart(${JSON.stringify(product).replace(/"/g, '&quot;')})"
+                        class="${this.cart.some(item => item.id === product.id) ? 'in-cart' : ''}">
+                        ${this.cart.some(item => item.id === product.id) ? 'Dalam Keranjang' : 'Tambah ke Keranjang'}
+                    </button>
+                </div>
+            </div>
+        `).join('');
 
         if (totalPages > 1) {
             const pagination = document.createElement('div');
@@ -369,85 +367,94 @@ class POSSystem {
     }
 
     async loadStoreInfo() {
-        return new Promise((resolve, reject) => {
-            const maxRetries = 3;
-            let attempt = 0;
+        try {
+            const url = new URL(this.SCRIPT_URL);
+            url.searchParams.set('action', 'getStoreInfo');
+            url.searchParams.set('t', Date.now());
             
-            const tryLoadStoreInfo = () => {
-                attempt++;
-                const callbackName = 'handleStoreInfo_' + Date.now();
-                let timeoutId;
-
+            // Buat callback unik
+            const callbackName = 'handleStoreInfo_' + Date.now();
+            url.searchParams.set('callback', callbackName);
+            
+            // Buat promise untuk menangani JSONP
+            const storeInfoPromise = new Promise((resolve, reject) => {
                 window[callbackName] = (response) => {
-                    clearTimeout(timeoutId);
-                    try {
-                        if (response.status === 'success' && response.data) {
-                            this.waNumber = response.data.waNumber;
-                            this.storeAddress = response.data.address;
-                            this.website = response.data.website;
-                            this.storeName = response.data.storeName;
-                            this.bankAccount = response.data.bankAccount;
-                            
-                            const storeTitle = document.getElementById('storeName');
-                            if (storeTitle) {
-                                storeTitle.textContent = this.storeName || 'TOKO-KU';
-                            }
-                            
-                            const strukStoreName = document.getElementById('strukStoreName');
-                            if (strukStoreName) {
-                                strukStoreName.textContent = this.storeName || 'TOKO-KU';
-                            }
-                            
-                            console.log('Store info loaded:', response.data);
-                            resolve(response.data);
-                        } else {
-                            throw new Error(response.message || 'Gagal memuat informasi toko');
-                        }
-                    } catch (error) {
-                        this.handleStoreInfoError(error, attempt, maxRetries, tryLoadStoreInfo, reject);
-                    } finally {
-                        this.cleanupCallback(callbackName);
+                    if (response.status === 'success') {
+                        resolve(response.data);
+                    } else {
+                        reject(new Error(response.message || 'Gagal memuat informasi toko'));
                     }
+                    // Bersihkan callback
+                    delete window[callbackName];
+                    document.body.removeChild(script);
                 };
+            });
 
-                const script = document.createElement('script');
-                script.src = `${this.SCRIPT_URL}?action=getStoreInfo&callback=${callbackName}&t=${Date.now()}`;
-                
-                timeoutId = setTimeout(() => {
-                    this.cleanupCallback(callbackName);
-                    this.handleStoreInfoError(new Error('Timeout memuat informasi toko'), attempt, maxRetries, tryLoadStoreInfo, reject);
-                }, 15000);
-
-                script.onerror = () => {
-                    clearTimeout(timeoutId);
-                    this.cleanupCallback(callbackName);
-                    this.handleStoreInfoError(new Error('Gagal memuat script informasi toko'), attempt, maxRetries, tryLoadStoreInfo, reject);
-                };
-
-                document.body.appendChild(script);
+            // Buat dan tambahkan script tag
+            const script = document.createElement('script');
+            script.src = url.toString();
+            script.onerror = () => {
+                reject(new Error('Gagal memuat script store info'));
+                delete window[callbackName];
+                document.body.removeChild(script);
             };
+            document.body.appendChild(script);
 
-            tryLoadStoreInfo();
-        });
-    }
-
-    handleStoreInfoError(error, attempt, maxRetries, retryFn, reject) {
-        console.error(`Attempt ${attempt} failed:`, error);
-        if (attempt < maxRetries) {
-            console.log(`Retrying... (${attempt + 1}/${maxRetries})`);
-            setTimeout(retryFn, 2000 * attempt);
-        } else {
-            console.error('Max retries reached');
-            reject(error);
+            // Tunggu response
+            const data = await storeInfoPromise;
+            
+            // Update store info
+            this.waNumber = data.waNumber;
+            this.storeAddress = data.address;
+            this.website = data.website;
+            this.storeName = data.storeName;
+            this.bankAccount = data.bankAccount;
+            
+            // Update store name
+            const storeNameElements = ['storeName', 'footerStoreName', 'strukStoreName'];
+            storeNameElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = this.storeName || 'BOUQUET MIS-RIN';
+            });
+            
+            // Update footer info
+            const footerAddress = document.getElementById('footerAddress');
+            if (footerAddress) {
+                footerAddress.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${this.storeAddress || 'Alamat tidak tersedia'}`;
+            }
+            
+            const footerWhatsapp = document.getElementById('footerWhatsapp');
+            if (footerWhatsapp) {
+                footerWhatsapp.innerHTML = `<i class="fab fa-whatsapp"></i> ${this.waNumber || 'WhatsApp tidak tersedia'}`;
+            }
+            
+            const footerWebsite = document.getElementById('footerWebsite');
+            if (footerWebsite) {
+                if (this.website) {
+                    footerWebsite.innerHTML = `<i class="fas fa-globe"></i> <a href="${this.website}" target="_blank">${this.website}</a>`;
+                } else {
+                    footerWebsite.style.display = 'none';
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error loading store info:', error);
+            
+            // Set default values jika gagal
+            this.storeName = 'BOUQUET MIS-RIN';
+            this.storeAddress = 'Alamat tidak tersedia';
+            this.waNumber = 'WhatsApp tidak tersedia';
+            this.website = '';
+            
+            // Update UI dengan default values
+            document.getElementById('storeName').textContent = this.storeName;
+            document.getElementById('footerStoreName').textContent = this.storeName;
+            document.getElementById('footerAddress').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${this.storeAddress}`;
+            document.getElementById('footerWhatsapp').innerHTML = `<i class="fab fa-whatsapp"></i> ${this.waNumber}`;
+            document.getElementById('footerWebsite').style.display = 'none';
+            
+            throw error;
         }
-    }
-
-    cleanupCallback(callbackName) {
-        const script = document.querySelector(`script[src*="callback=${callbackName}"]`);
-        if (script) {
-            document.body.removeChild(script);
-        }
-        delete window[callbackName];
     }
 
     async checkout() {
@@ -720,6 +727,256 @@ class POSSystem {
         this.currentPage = pageNumber;
         this.renderProducts(this.products);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    showProductModal(product) {
+        this.currentProduct = product;
+        const modal = document.getElementById('productModal');
+        const imageContainer = document.querySelector('.product-image-zoom');
+        const img = document.getElementById('modalProductImage');
+        const thumbnailsContainer = document.getElementById('productThumbnails');
+        
+        // Set product details
+        document.getElementById('modalProductName').textContent = product.nama_produk;
+        document.getElementById('modalProductPrice').textContent = this.formatNumber(product.harga);
+        document.getElementById('modalProductStock').textContent = `${product.stok} ${product.satuan || 'pcs'}`;
+        document.getElementById('modalProductDescription').textContent = product.deskripsi || 'Tidak ada deskripsi';
+        
+        // Setup add to cart button
+        const addToCartBtn = document.getElementById('modalAddToCart');
+        const isInCart = this.cart.some(item => item.id === product.id);
+        if (addToCartBtn) {
+            addToCartBtn.textContent = isInCart ? 'Dalam Keranjang' : 'Tambah ke Keranjang';
+            addToCartBtn.className = `add-to-cart-btn ${isInCart ? 'in-cart' : ''}`;
+            // Hapus event listener lama jika ada
+            addToCartBtn.replaceWith(addToCartBtn.cloneNode(true));
+            // Tambahkan event listener baru
+            document.getElementById('modalAddToCart').addEventListener('click', () => {
+                this.addToCart(product);
+                // Update tampilan tombol setelah ditambahkan ke keranjang
+                const btn = document.getElementById('modalAddToCart');
+                btn.textContent = 'Dalam Keranjang';
+                btn.className = 'add-to-cart-btn in-cart';
+                // Update juga tombol di card produk
+                const cardBtn = document.querySelector(`.product-card[data-id="${product.id}"] button`);
+                if (cardBtn) {
+                    cardBtn.textContent = 'Dalam Keranjang';
+                    cardBtn.className = 'in-cart';
+                }
+            });
+        }
+        
+        // Collect all available images
+        let images = [];
+        
+        // Add main image
+        if (product.gambar_produk) {
+            images.push(product.gambar_produk);
+        }
+        
+        // Add second image
+        if (product.gambar_produk2) {
+            images.push(product.gambar_produk2);
+        }
+        
+        // Add third image
+        if (product.gambar_produk3) {
+            images.push(product.gambar_produk3);
+        }
+        
+        // Set default image if no images available
+        if (images.length === 0) {
+            images.push('images/no-image.png');
+        }
+        
+        // Set main image
+        img.src = images[0];
+        img.alt = product.nama_produk;
+        
+        // Generate thumbnails only if there are multiple images
+        if (images.length > 1) {
+            thumbnailsContainer.innerHTML = images.map((src, index) => `
+                <div class="thumbnail ${index === 0 ? 'active' : ''}" 
+                     onclick="window.pos.changeProductImage('${src}', this)">
+                    <img src="${src}" alt="${product.nama_produk} ${index + 1}"
+                         onerror="this.src='images/no-image.png'">
+                </div>
+            `).join('');
+            thumbnailsContainer.style.display = 'flex';
+        } else {
+            thumbnailsContainer.style.display = 'none';
+        }
+        
+        // Show modal
+        modal.style.display = 'block';
+        
+        // Image zoom and pan functionality
+        let scale = 1;
+        let isPanning = false;
+        let startX;
+        let startY;
+        let panX = 0;
+        let panY = 0;
+
+        // Add zoom controls
+        const zoomControls = document.createElement('div');
+        zoomControls.className = 'zoom-controls';
+        zoomControls.innerHTML = `
+            <button class="zoom-btn zoom-in">+</button>
+            <button class="zoom-btn zoom-out">-</button>
+            <button class="zoom-btn zoom-reset">↺</button>
+        `;
+        imageContainer.appendChild(zoomControls);
+
+        // Zoom in function
+        const zoomIn = () => {
+            if (scale < 3) {
+                scale += 0.5;
+                updateTransform();
+            }
+        };
+
+        // Zoom out function
+        const zoomOut = () => {
+            if (scale > 1) {
+                scale -= 0.5;
+                updateTransform();
+            }
+        };
+
+        // Reset zoom and pan
+        const resetZoom = () => {
+            scale = 1;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+            imageContainer.classList.remove('zoomed');
+        };
+
+        // Update transform
+        const updateTransform = () => {
+            img.style.transform = `scale(${scale}) translate(${panX}px, ${panY}px)`;
+            imageContainer.classList.toggle('zoomed', scale > 1);
+        };
+
+        // Add event listeners for zoom controls
+        zoomControls.querySelector('.zoom-in').onclick = (e) => {
+            e.stopPropagation();
+            zoomIn();
+        };
+        
+        zoomControls.querySelector('.zoom-out').onclick = (e) => {
+            e.stopPropagation();
+            zoomOut();
+        };
+        
+        zoomControls.querySelector('.zoom-reset').onclick = (e) => {
+            e.stopPropagation();
+            resetZoom();
+        };
+
+        // Pan functionality
+        imageContainer.onmousedown = function(e) {
+            if (scale > 1) {
+                isPanning = true;
+                startX = e.clientX - panX;
+                startY = e.clientY - panY;
+                this.style.cursor = 'grabbing';
+            }
+        };
+
+        imageContainer.onmousemove = function(e) {
+            if (!isPanning) return;
+            
+            const moveX = e.clientX - startX;
+            const moveY = e.clientY - startY;
+            
+            // Calculate max pan based on zoom level
+            const maxPan = 100 * (scale - 1);
+            panX = Math.min(Math.max(moveX, -maxPan), maxPan);
+            panY = Math.min(Math.max(moveY, -maxPan), maxPan);
+            
+            updateTransform();
+        };
+
+        imageContainer.onmouseup = function() {
+            isPanning = false;
+            this.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+        };
+
+        imageContainer.onmouseleave = function() {
+            isPanning = false;
+            this.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+        };
+
+        // Double click to reset zoom
+        imageContainer.ondblclick = function(e) {
+            e.preventDefault();
+            resetZoom();
+        };
+
+        // Mouse wheel zoom
+        imageContainer.onwheel = function(e) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        };
+
+        // Cleanup on modal close
+        const cleanup = () => {
+            resetZoom();
+            if (zoomControls.parentNode) {
+                zoomControls.parentNode.removeChild(zoomControls);
+            }
+        };
+
+        // Add cleanup to modal close button
+        modal.querySelector('.close').onclick = () => {
+            cleanup();
+            this.closeProductModal();
+        };
+    }
+
+    closeProductModal() {
+        const modal = document.getElementById('productModal');
+        modal.style.display = 'none';
+        this.currentProduct = null;
+    }
+
+    // Update changeProductImage method
+    changeProductImage(src, thumbnailElement) {
+        const mainImage = document.getElementById('modalProductImage');
+        const oldSrc = mainImage.src; // Store old source
+        
+        // Set new image
+        mainImage.src = src;
+        
+        // Handle image load error
+        mainImage.onerror = () => {
+            mainImage.src = 'images/no-image.png';
+        };
+        
+        // Update active thumbnail
+        document.querySelectorAll('.thumbnail').forEach(thumb => {
+            thumb.classList.remove('active');
+        });
+        thumbnailElement.classList.add('active');
+        
+        // Reset zoom when changing image
+        const imageContainer = document.querySelector('.product-image-zoom');
+        if (imageContainer.classList.contains('zoomed')) {
+            imageContainer.classList.remove('zoomed');
+            mainImage.style.transform = 'none';
+        }
+        
+        // Reset pan position
+        if (this.currentPanX !== undefined) {
+            this.currentPanX = 0;
+            this.currentPanY = 0;
+        }
     }
 }
 

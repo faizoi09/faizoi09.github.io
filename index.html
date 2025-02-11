@@ -130,5 +130,33 @@
     <iframe id="printFrame" style="display: none;"></iframe>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="script.js"></script>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content product-modal">
+            <span class="close" onclick="window.pos.closeProductModal()">&times;</span>
+            <div class="product-detail">
+                <div class="product-gallery">
+                    <div class="product-image-zoom">
+                        <img id="modalProductImage" src="" alt="Product Image">
+                    </div>
+                    <div class="product-thumbnails" id="productThumbnails">
+                        <!-- Thumbnails will be loaded here -->
+                    </div>
+                </div>
+                <div class="product-info-detail">
+                    <h2 id="modalProductName"></h2>
+                    <p class="price">Rp <span id="modalProductPrice"></span></p>
+                    <p class="stock">Stok: <span id="modalProductStock"></span></p>
+                    <div class="description">
+                        <h3>Deskripsi Produk:</h3>
+                        <p id="modalProductDescription"></p>
+                    </div>
+                    <button id="modalAddToCart" class="add-to-cart-btn">
+                        Tambah ke Keranjang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
