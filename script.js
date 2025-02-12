@@ -621,6 +621,12 @@ class POSSystem {
                 totalEl.textContent = `Rp ${this.formatNumber(strukData.total)}`;
             }
 
+            // Update bank account info
+            const strukBankAccount = document.getElementById('strukBankAccount');
+            if (strukBankAccount) {
+                strukBankAccount.textContent = this.bankAccount || 'Rekening tidak tersedia';
+            }
+
             // Tampilkan modal
             modal.style.display = 'block';
 

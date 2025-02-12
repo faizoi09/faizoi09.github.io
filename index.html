@@ -49,6 +49,9 @@
                 <div class="modal-content cart-modal">
                     <div class="modal-header">
                         <h2>Keranjang Belanja</h2>
+                        <button class="modal-close-btn" onclick="window.pos.toggleCart()">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                     <div class="cart-section">
                         <div class="cart-content">
@@ -112,8 +115,8 @@
 
                 <div class="struk-footer">
                     <p>Terima kasih atas kunjungan Anda</p>
-                    <p>Silahkan Lanjutkan dengan mentransfer</p>
-                    <p>ke rekening yang tertera di pesan WA</p>
+                    <p>Silahkan lakukan pembayaran ke:</p>
+                    <p id="strukBankAccount"></p>
                 </div>
             </div>
             <div class="struk-actions">

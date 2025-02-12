@@ -1617,6 +1617,9 @@ main {
     padding: 24px 32px;
     background: linear-gradient(to right, #4f46e5, #6366f1);
     border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .modal-header h2 {
@@ -1634,14 +1637,21 @@ main {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: white;
-    font-size: 20px;
-    backdrop-filter: blur(4px);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s ease;
 }
 
 .modal-close-btn:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
+}
+
+.modal-close-btn i {
+    font-size: 1.2rem;
 }
 
 .cart-section {
