@@ -49,34 +49,34 @@
                 <div class="modal-content cart-modal">
                     <div class="modal-header">
                         <h2>Keranjang Belanja</h2>
-                        <span class="close" onclick="window.pos.toggleCart()">&times;</span>
                     </div>
                     <div class="cart-section">
-                        <div class="cart-items" id="cartItems">
-                            <!-- Cart items will be loaded here -->
+                        <div class="cart-content">
+                            <div class="cart-items" id="cartItems">
+                                <!-- Cart items will be loaded here -->
+                            </div>
+                            <div class="cart-summary">
+                                <div class="total">
+                                    <span>Total:</span>
+                                    <span id="cartTotal">Rp 0</span>
+                                </div>
+                                <button id="checkoutBtn" disabled>Bayar</button>
+                            </div>
                         </div>
-                        <div class="cart-summary">
-                            <div class="total">
-                                <span>Total:</span>
-                                <span id="cartTotal">Rp 0</span>
+                        
+                        <div class="buyer-form">
+                            <div class="form-group">
+                                <label for="buyerName">Nama Pembeli *</label>
+                                <input type="text" id="buyerName" placeholder="Masukkan nama lengkap">
                             </div>
-                            
-                            <div class="buyer-form">
-                                <div class="form-group">
-                                    <label for="buyerName">Nama Pembeli *</label>
-                                    <input type="text" id="buyerName" placeholder="Masukkan nama lengkap">
-                                </div>
-                                <div class="form-group">
-                                    <label for="buyerAddress">Alamat *</label>
-                                    <textarea id="buyerAddress" placeholder="Masukkan alamat lengkap"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="buyerPhone">No. WhatsApp *</label>
-                                    <input type="tel" id="buyerPhone" placeholder="Contoh: 08123456789">
-                                </div>
+                            <div class="form-group">
+                                <label for="buyerPhone">No. WhatsApp *</label>
+                                <input type="tel" id="buyerPhone" placeholder="Contoh: 08123456789">
                             </div>
-                            
-                            <button id="checkoutBtn" disabled>Bayar</button>
+                            <div class="form-group">
+                                <label for="buyerAddress">Alamat *</label>
+                                <textarea id="buyerAddress" placeholder="Masukkan alamat lengkap"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
     </div>
 
     <div id="strukModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content struk-modal">
             <div class="struk-container">
                 <div class="struk-header">
                     <h2 id="strukStoreName">BOUQUET MIS-RIN</h2>
@@ -95,8 +95,8 @@
 
                 <div class="buyer-info">
                     <p id="buyerNameStruk"></p>
-                    <p id="buyerAddressStruk"></p>
                     <p id="buyerPhoneStruk"></p>
+                    <p id="buyerAddressStruk"></p>
                 </div>
 
                 <div class="struk-items" id="itemList">
@@ -104,7 +104,7 @@
                 </div>
 
                 <div class="total-section">
-                    <div class="item-row">
+                    <div class="total-row">
                         <strong>Total:</strong>
                         <span id="totalStruk"></span>
                     </div>
@@ -116,13 +116,19 @@
                     <p>ke rekening yang tertera di pesan WA</p>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-print" onclick="window.print()">Cetak Struk</button>
+            <div class="struk-actions">
+                <button class="btn-print" onclick="window.print()">
+                    <i class="fas fa-print"></i>
+                    Cetak Struk
+                </button>
                 <button class="btn-whatsapp" onclick="window.pos.sendToWhatsApp()">
                     <i class="fab fa-whatsapp"></i> 
                     Kirim ke WhatsApp
                 </button>
-                <button class="btn-close" onclick="closeModal()">Tutup</button>
+                <button class="btn-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                    Tutup
+                </button>
             </div>
         </div>
     </div>

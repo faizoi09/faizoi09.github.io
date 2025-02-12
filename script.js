@@ -748,16 +748,12 @@ class POSSystem {
         if (addToCartBtn) {
             addToCartBtn.textContent = isInCart ? 'Dalam Keranjang' : 'Tambah ke Keranjang';
             addToCartBtn.className = `add-to-cart-btn ${isInCart ? 'in-cart' : ''}`;
-            // Hapus event listener lama jika ada
             addToCartBtn.replaceWith(addToCartBtn.cloneNode(true));
-            // Tambahkan event listener baru
             document.getElementById('modalAddToCart').addEventListener('click', () => {
                 this.addToCart(product);
-                // Update tampilan tombol setelah ditambahkan ke keranjang
                 const btn = document.getElementById('modalAddToCart');
                 btn.textContent = 'Dalam Keranjang';
                 btn.className = 'add-to-cart-btn in-cart';
-                // Update juga tombol di card produk
                 const cardBtn = document.querySelector(`.product-card[data-id="${product.id}"] button`);
                 if (cardBtn) {
                     cardBtn.textContent = 'Dalam Keranjang';
@@ -768,32 +764,16 @@ class POSSystem {
         
         // Collect all available images
         let images = [];
-        
-        // Add main image
-        if (product.gambar_produk) {
-            images.push(product.gambar_produk);
-        }
-        
-        // Add second image
-        if (product.gambar_produk2) {
-            images.push(product.gambar_produk2);
-        }
-        
-        // Add third image
-        if (product.gambar_produk3) {
-            images.push(product.gambar_produk3);
-        }
-        
-        // Set default image if no images available
-        if (images.length === 0) {
-            images.push('images/no-image.png');
-        }
+        if (product.gambar_produk) images.push(product.gambar_produk);
+        if (product.gambar_produk2) images.push(product.gambar_produk2);
+        if (product.gambar_produk3) images.push(product.gambar_produk3);
+        if (images.length === 0) images.push('images/no-image.png');
         
         // Set main image
         img.src = images[0];
         img.alt = product.nama_produk;
         
-        // Generate thumbnails only if there are multiple images
+        // Generate thumbnails
         if (images.length > 1) {
             thumbnailsContainer.innerHTML = images.map((src, index) => `
                 <div class="thumbnail ${index === 0 ? 'active' : ''}" 
@@ -810,132 +790,111 @@ class POSSystem {
         // Show modal
         modal.style.display = 'block';
         
-        // Image zoom and pan functionality
-        let scale = 1;
-        let isPanning = false;
-        let startX;
-        let startY;
-        let panX = 0;
-        let panY = 0;
+        // Initialize zoom functionality
+        const initializeZoom = () => {
+            const container = imageContainer;
+            let scale = 1;
+            let isDragging = false;
+            let startX, startY, translateX = 0, translateY = 0;
 
-        // Add zoom controls
-        const zoomControls = document.createElement('div');
-        zoomControls.className = 'zoom-controls';
-        zoomControls.innerHTML = `
-            <button class="zoom-btn zoom-in">+</button>
-            <button class="zoom-btn zoom-out">-</button>
-            <button class="zoom-btn zoom-reset">↺</button>
-        `;
-        imageContainer.appendChild(zoomControls);
+            // Remove existing zoom controls if any
+            const existingControls = container.querySelector('.zoom-controls');
+            if (existingControls) existingControls.remove();
 
-        // Zoom in function
-        const zoomIn = () => {
-            if (scale < 3) {
-                scale += 0.5;
+            // Add zoom controls
+            const zoomControls = document.createElement('div');
+            zoomControls.className = 'zoom-controls';
+            zoomControls.innerHTML = `
+                <button class="zoom-btn zoom-in">+</button>
+                <button class="zoom-btn zoom-out">-</button>
+            `;
+            container.appendChild(zoomControls);
+
+            // Zoom functions
+            const updateTransform = () => {
+                const maxTranslateX = (scale - 1) * container.offsetWidth / 2;
+                const maxTranslateY = (scale - 1) * container.offsetHeight / 2;
+                translateX = Math.min(Math.max(-maxTranslateX, translateX), maxTranslateX);
+                translateY = Math.min(Math.max(-maxTranslateY, translateY), maxTranslateY);
+                img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                container.style.cursor = scale > 1 ? (isDragging ? 'grabbing' : 'move') : 'zoom-in';
+            };
+
+            // Event listeners
+            zoomControls.querySelector('.zoom-in').addEventListener('click', () => {
+                if (scale < 3) {
+                    scale *= 1.5;
+                    updateTransform();
+                }
+            });
+
+            zoomControls.querySelector('.zoom-out').addEventListener('click', () => {
+                if (scale > 1) {
+                    scale /= 1.5;
+                    if (scale < 1) scale = 1;
+                    updateTransform();
+                }
+            });
+
+            // Mouse wheel zoom
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY * -0.01;
+                scale = Math.min(Math.max(1, scale + delta), 3);
                 updateTransform();
-            }
+            });
+
+            // Pan functionality
+            container.addEventListener('mousedown', (e) => {
+                if (scale > 1) {
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    container.style.cursor = 'grabbing';
+                }
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    updateTransform();
+                }
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+                container.style.cursor = scale > 1 ? 'move' : 'zoom-in';
+            });
+
+            // Touch events
+            container.addEventListener('touchstart', (e) => {
+                if (scale > 1) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX - translateX;
+                    startY = e.touches[0].clientY - translateY;
+                }
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                    translateX = e.touches[0].clientX - startX;
+                    translateY = e.touches[0].clientY - startY;
+                    updateTransform();
+                }
+            });
+
+            container.addEventListener('touchend', () => {
+                isDragging = false;
+            });
         };
 
-        // Zoom out function
-        const zoomOut = () => {
-            if (scale > 1) {
-                scale -= 0.5;
-                updateTransform();
-            }
-        };
-
-        // Reset zoom and pan
-        const resetZoom = () => {
-            scale = 1;
-            panX = 0;
-            panY = 0;
-            updateTransform();
-            imageContainer.classList.remove('zoomed');
-        };
-
-        // Update transform
-        const updateTransform = () => {
-            img.style.transform = `scale(${scale}) translate(${panX}px, ${panY}px)`;
-            imageContainer.classList.toggle('zoomed', scale > 1);
-        };
-
-        // Add event listeners for zoom controls
-        zoomControls.querySelector('.zoom-in').onclick = (e) => {
-            e.stopPropagation();
-            zoomIn();
-        };
+        // Initialize zoom after image loads
+        img.onload = initializeZoom;
         
-        zoomControls.querySelector('.zoom-out').onclick = (e) => {
-            e.stopPropagation();
-            zoomOut();
-        };
-        
-        zoomControls.querySelector('.zoom-reset').onclick = (e) => {
-            e.stopPropagation();
-            resetZoom();
-        };
-
-        // Pan functionality
-        imageContainer.onmousedown = function(e) {
-            if (scale > 1) {
-                isPanning = true;
-                startX = e.clientX - panX;
-                startY = e.clientY - panY;
-                this.style.cursor = 'grabbing';
-            }
-        };
-
-        imageContainer.onmousemove = function(e) {
-            if (!isPanning) return;
-            
-            const moveX = e.clientX - startX;
-            const moveY = e.clientY - startY;
-            
-            // Calculate max pan based on zoom level
-            const maxPan = 100 * (scale - 1);
-            panX = Math.min(Math.max(moveX, -maxPan), maxPan);
-            panY = Math.min(Math.max(moveY, -maxPan), maxPan);
-            
-            updateTransform();
-        };
-
-        imageContainer.onmouseup = function() {
-            isPanning = false;
-            this.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
-        };
-
-        imageContainer.onmouseleave = function() {
-            isPanning = false;
-            this.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
-        };
-
-        // Double click to reset zoom
-        imageContainer.ondblclick = function(e) {
-            e.preventDefault();
-            resetZoom();
-        };
-
-        // Mouse wheel zoom
-        imageContainer.onwheel = function(e) {
-            e.preventDefault();
-            if (e.deltaY < 0) {
-                zoomIn();
-            } else {
-                zoomOut();
-            }
-        };
-
         // Cleanup on modal close
-        const cleanup = () => {
-            resetZoom();
-            if (zoomControls.parentNode) {
-                zoomControls.parentNode.removeChild(zoomControls);
-            }
-        };
-
-        // Add cleanup to modal close button
         modal.querySelector('.close').onclick = () => {
-            cleanup();
             this.closeProductModal();
         };
     }
